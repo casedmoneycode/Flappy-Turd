@@ -18,10 +18,12 @@ const bird = {
         ctx.fillRect(this.x, this.y, this.width, this.height);
     },
     update() {
+        if (isGameOver) return; // Stop movement when game is over
+
         this.velocity += this.gravity;
         this.y += this.velocity;
-        
-        if (this.y + this.height > canvas.height) {
+
+        if (this.y + this.height >= canvas.height) {
             gameOver();
         }
         if (this.y < 0) {
@@ -30,7 +32,7 @@ const bird = {
         }
     },
     jump() {
-        this.velocity = this.lift;
+        if (!isGameOver) this.velocity = this.lift;
     }
 };
 
@@ -49,6 +51,8 @@ function createPipe() {
 }
 
 function updatePipes() {
+    if (isGameOver) return; // Stop pipe movement after game over
+
     for (let i = 0; i < pipes.length; i++) {
         pipes[i].x -= 2;
 
@@ -85,16 +89,14 @@ function checkCollision() {
 
 // Handle keyboard input
 document.addEventListener("keydown", function(event) {
-    if (event.code === "Space" && !isGameOver) {
+    if (event.code === "Space") {
         bird.jump();
     }
 });
 
 // Handle touch input
 canvas.addEventListener("touchstart", function() {
-    if (!isGameOver) {
-        bird.jump();
-    }
+    bird.jump();
 });
 
 function gameOver() {
@@ -114,7 +116,7 @@ function restartGame() {
 }
 
 function gameLoop() {
-    if (isGameOver) return;
+    if (isGameOver) return; // Stop the loop if game over
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
@@ -130,4 +132,5 @@ function gameLoop() {
     requestAnimationFrame(gameLoop);
 }
 
+// Start game
 gameLoop();
