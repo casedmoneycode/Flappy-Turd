@@ -1,8 +1,9 @@
 body {
     margin: 0;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
+    justify-content: center;
     height: 100vh;
     background-color: skyblue;
     overflow: hidden;
@@ -10,4 +11,19 @@ body {
 
 canvas {
     border: 2px solid black;
+}
+
+#restartBtn {
+    margin-top: 10px;
+    padding: 10px 20px;
+    font-size: 18px;
+    background-color: red;
+    color: white;
+    border: none;
+    cursor: pointer;
+    display: none; /* Initially hidden */
+}
+
+#restartBtn:hover {
+    background-color: darkred;
 }
