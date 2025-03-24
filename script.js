@@ -1,5 +1,6 @@
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
+const restartBtn = document.getElementById("restartBtn");
 
 canvas.width = 320;
 canvas.height = 480;
@@ -21,8 +22,7 @@ const bird = {
         this.y += this.velocity;
         
         if (this.y + this.height > canvas.height) {
-            this.y = canvas.height - this.height;
-            this.velocity = 0;
+            gameOver();
         }
         if (this.y < 0) {
             this.y = 0;
@@ -34,8 +34,9 @@ const bird = {
     }
 };
 
-const pipes = [];
+let pipes = [];
 let frame = 0;
+let isGameOver = false;
 
 function createPipe() {
     let pipeHeight = Math.floor(Math.random() * 150) + 100;
@@ -77,25 +78,44 @@ function checkCollision() {
             bird.x + bird.width > pipe.x &&
             (bird.y < pipe.height || bird.y + bird.height > pipe.height + pipe.gap)
         ) {
-            alert("Game Over! Refresh to Restart.");
-            document.location.reload();
+            gameOver();
         }
     }
 }
 
 // Handle keyboard input
 document.addEventListener("keydown", function(event) {
-    if (event.code === "Space") {
+    if (event.code === "Space" && !isGameOver) {
         bird.jump();
     }
 });
 
 // Handle touch input
 canvas.addEventListener("touchstart", function() {
-    bird.jump();
+    if (!isGameOver) {
+        bird.jump();
+    }
 });
 
+function gameOver() {
+    isGameOver = true;
+    restartBtn.style.display = "block"; // Show restart button
+}
+
+// Restart Game Function
+function restartGame() {
+    isGameOver = false;
+    restartBtn.style.display = "none"; // Hide restart button
+    bird.y = 150;
+    bird.velocity = 0;
+    pipes = []; // Clear pipes
+    frame = 0;
+    gameLoop();
+}
+
 function gameLoop() {
+    if (isGameOver) return;
+
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
     bird.update();
